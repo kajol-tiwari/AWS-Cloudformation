@@ -1,0 +1,27 @@
+Parameters: 
+    EnvironmentType: 
+        Description: Environment type for deployment 
+        Type: String
+        AllowedValues: [ production, development ]
+        ConstraintDescription: Can either be production or development
+
+Mappings: 
+    AWSRegionAMIs: 
+        us-east-1: 
+            HVM64: ami-07c8bc5c1ce9598c3
+        us-east-2: 
+            HVM64: ami-0a54aef4ef3b5f881
+        us-west-1: 
+            HVM64: ami-0bbe28eb2173f6167
+    EnvironmentInstanceType: 
+        development: 
+            instanceType: t2.micro 
+        production: 
+            instanceType: t2.small 
+
+Resources: 
+    MyEC2Instance: 
+        Type: AWS::EC2::Instance 
+        Properties: 
+            InstanceType: !FindInMap [EnvironmentInstanceType, !Ref 'EnvironmentType', instanceType] 
+            ImageId: !FindInMap [AWSRegionAMIs, !Ref 'AWS::Region', HVM64]
